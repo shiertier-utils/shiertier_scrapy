@@ -11,7 +11,7 @@ English | [中文](https://github.com/shiertier-utils/shiertier_scrapy/blob/main
 You can install `shiertier_scrapy` via `pip`:
 
 ```bash
-pip install git+https://github.com/shiertier/shiertier_scrapy.git
+pip install git+https://github.com/shiertier-utils/shiertier_scrapy.git
 ```
 
 Please note that this project is still under development.

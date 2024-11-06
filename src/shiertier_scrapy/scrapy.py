@@ -6,10 +6,18 @@ from PIL import Image
 from shiertier_logger import easy_logger_i18n as logger_i18n
 
 class ScrapyClientBase:
-    def __init__(self, save_dir='.'):
+    def __init__(self, save_dir=None):
         self.status_list_base = [400,401,403,404,429,500,503,504]
         self.headers = {}
-        self.save_dir = save_dir
+        if save_dir:
+            self.save_dir = save_dir
+        else:
+            # environment variable
+            save_dir = os.environ.get("SCRAPY_SAVE_DIR")
+            if save_dir:
+                self.save_dir = save_dir
+            else:
+                self.save_dir = os.getcwd()
 
     def create_directory(self):
         if not os.path.exists(self.save_dir):
