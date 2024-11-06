@@ -113,14 +113,39 @@ class ScrapyClientBase:
             return False
         return False
 
+    # def validate_image(self, filepath):
+    #     # 更完善的检验图片是否能打开，是否完整
+    #     try:
+    #         with Image.open(filepath) as img:
+    #             img.verify()  # only check image, not read full content
+    #         logger_i18n.debug("Image validation successful: $$filepath$$",{"$$filepath$$":filepath})
+    #         return True
+    #     except Exception as e:
+    #         logger_i18n.error("Image damaged: $$e$$",{"$$e$$":e})
+    #         return False
+
     def validate_image(self, filepath):
         try:
-            with Image.open(filepath) as img:
-                img.verify()  # only check image, not read full content
-            logger_i18n.debug("Image validation successful: $$filepath$$",{"$$filepath$$":filepath})
+            if not os.path.exists(filepath):
+                logger_i18n.error("File does not exist: $$filepath$$", {"$$filepath$$": filepath})
+                return False
+
+            if os.path.getsize(filepath) == 0:
+                logger_i18n.error("File is empty: $$filepath$$", {"$$filepath$$": filepath})
+                return False
+
+            with Image.open(filepath) as img_open:
+                try:
+                    img_open.load()  # 确保图片完全加载
+                except Exception as e:
+                    logger_i18n.error("Image loading failed: $$e$$", {"$$e$$": e})
+                    return False
+
+            logger_i18n.debug("Image validation successful: $$filepath$$", {"$$filepath$$": filepath})
             return True
+
         except Exception as e:
-            logger_i18n.error("Image damaged: $$e$$",{"$$e$$":e})
+            logger_i18n.error("Image validation failed: $$e$$", {"$$e$$": e})
             return False
         
     def download_images(self, urls, save_names, retries=3, sleep_time=2):
